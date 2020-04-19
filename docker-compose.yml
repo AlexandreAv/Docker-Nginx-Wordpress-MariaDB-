@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+
+  nginx_letsencrypt:
+    image: linuxserver/letsencrypt:1.3.0-ls109
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - PUID: '1000'
+      - PGID: '1000'
+      - TZ: 'Europe/London'
+      - URL: 'jesuisungomusu.fr'
+      - SUBDOMAINS: 'www'
+      - VALIDATION: 'http'
+      - EMAIL: 'contact@jesuisungomusu.fr'
+      - DHLEVEL: '4048'
+      - ONLY_SUBDOMAINS: 'false'
+
+  mariadb:
+    image: mariadb:bionic
+    environment:
+      - MARIADB_USER: 'user_wordpress'
+      - MARIADB_DATABASE: 'db_wordpress'
+      - ALLOW_EMPTY_PASSWORD: 'yes'
+
+  wordpress:
+    image: wordpress:php7.2-fpm
+    expose: '9000'
+    environment:
+      - WORDPRESS_DB_HOST: mariadb
+      - WORDPRESS_DB_USER: 'user_wordpress'
+      - WORDPRESS_DB_NAME: 'db_wordpress'
+    volumes:
+      - 'etc/php-fpm.d/www.conf:/user/local/etc/php-fpm.d/www.conf'
+      - 'var/www/html:/var/www/html'
+     
+
+
